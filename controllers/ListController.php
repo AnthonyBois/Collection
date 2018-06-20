@@ -12,6 +12,39 @@
 	        $dataEncode = json_encode($data);
 	        return $dataEncode;
 		}
+		
+		//recherche
+		public function exportRechercheCollection($string){
+			$recherche = new listModel;
+			$data = $recherche->listRechercheCollection($string);
+
+	        $dataEncode = json_encode($data);
+	        return $dataEncode;
+		}
+		
+		//liste les collections random
+		public function exportRandomCollection($idUser){
+			$recherche = new listModel;
+			$data = $recherche->listRandomCollection($idUser);
+			if($data){
+				if(sizeof($data)<10){
+				$rand_keys = array_rand($data, sizeof($data));
+				}else{
+					$rand_keys = array_rand($data, 10);
+				}
+				
+				$final = array();
+				foreach ($rand_keys as $value) {
+					array_push($final, $data[$rand_keys[$value]]);
+				}
+		
+		        $dataEncode = json_encode($final);
+		        return $dataEncode;
+			}else{
+				return 0;
+			}
+			
+		}
 
 		public function exportUser($id){
 			//liste les utilisateurs
@@ -85,6 +118,19 @@
 		            }
 		       }
 			   $dataEncode = json_encode($tableau);
+			   return $dataEncode;
+			}else{
+				return "null";
+			}
+		}
+		
+		public function exportCarac($id){
+			$recherche = new listModel;
+			$data = $recherche->listCarac($id);
+
+			if(!empty($data)){
+		        
+			   $dataEncode = json_encode($data);
 			   return $dataEncode;
 			}else{
 				return "null";

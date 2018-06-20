@@ -8,81 +8,93 @@
 	class NewController {
 		//nouvel utilisateur
 		public function newUser(){
-			$password = password_hash("super", PASSWORD_DEFAULT);
-			echo $password;
+			$json=file_get_contents('php://input');
+			$obj=json_decode($json, true);	
+			
+			$password = password_hash($obj["password"], PASSWORD_DEFAULT);
 			$formData = array (
-				"firstname" => "jean",
-				"name" => "Pomme",
-				"pseudo" => "jp",
-				"email" => "pj'jj@yahooooooo.com",
-				"password" => $password
+				"firstname" => $obj["firstname"],
+				"name" => $obj["name"],
+				"pseudo" => $obj["pseudo"],
+				"email" => $obj["email"],
+				"password" => $password,
 				);
 			$ajout = new NewModel;
 			$data = $ajout->newUser($formData);
-		    return $data;
+		    return json_encode($data);
 		}
 		
 		//nouvelle collection
 		public function newCollection($tok){
-			$verif = new verificationModel;
-			$decode = $verif->decodeToken($tok); //decode le token
-			$user_id = ($decode["user_id"]);
-
-			$formData = array (
-			"title" => "Table",
-			"description" => "Mes plus belles tables",
-			"image" => "table.png",
-			"caracteristiques" => array(
-				"1" => array(
-					"caracteristiqueTitle" => "couleur",
-					"caracteristiqueObl" => 1
-					),
-				"2" => array(
-					"caracteristiqueTitle" => "vitre",
-					"caracteristiqueObl" => 1
+			$json=file_get_contents('php://input');
+			$obj=json_decode($json, true);	
+			
+			$caracteristiques = array();
+			foreach($obj["carac"] as $carac){
+				array_push($caracteristiques, 
+					array(
+						"caracteristiqueTitle" => $carac,
 					)
-				)
+				);		
+			}
+			$formData = array (
+			"id" => $obj["id"],
+			"title" => $obj["title"],
+			"description" => $obj["description"],
+			"image" => $obj["image"],
+			"caracteristiques" => $caracteristiques
+			
 			);
 			$ajout = new NewModel;
 			$data = $ajout->newCollection($formData, $user_id);
 			
-		    return $data;
+		    return json_encode($data);
 		}
+		
 		
 		//nouvel item
 		public function newItem($tok){
-			$collectionId=26;
-			$verif = new verificationModel;
+			$json=file_get_contents('php://input');
+			$obj=json_decode($json, true);	
+			$collectionId=$obj["id"];
+			
+			/*$verif = new verificationModel;
 			$decode = $verif->decodeToken($tok); //decode le token
 			$user_id = ($decode["user_id"]);
-			$right = $verif->verifCollection($collectionId); // on verifie si l'utilisateur a le droit
+			$right = $verif->verifCollection($collectionId); // on verifie si l'utilisateur a le  */
 			
-			if($user_id == $right["user_id"] && $user_id != NULL){  //on ajoute si l'utilisateur dans le token à le droit
-				$formData = array (
-					"title" => "Poulé'3",
-					"image" => "zâer.png",
-					"caracteristiques" => array(
-						"1" => array(
-							"caracData" => "8",
-							"caracId" => 56
-							),
-						"2" => array(
-							"caracData" => "23",
-							"caracId" => 12
-							)
+		//	if($user_id == $right["user_id"] && $user_id != NULL){  //on ajoute si l'utilisateur dans le token à le droit
+				$caracteristiques = array();
+				foreach($obj["carac"] as $carac){
+					array_push($caracteristiques, 
+						array(
+							"caracData" => $carac["caracData"],
+							"caracId" => $carac["caracId"],
 						)
+					);		
+				}
+			
+				$formData = array (
+					"id" => $obj["id"],
+					"title" => $obj["title"],
+					"image" => $obj["image"],
+					"caracteristiques" => $caracteristiques
 					);
 				$ajout = new NewModel;
-				$data = $ajout->newItem($formData, $collectionId);
-			}else{
+				$data = $ajout->newItem($formData);
+				
+				//var_dump($formdata);exit;
+		/*	}else{
 				echo "error";
-			}
-		    return $data;
+			} */
+		    return json_encode($data);
 		}
 		
 		//nouvelle caracteristique
 		public function newCaracteristique($tok){
-			$collectionId=1;
+			$json=file_get_contents('php://input');
+			$obj=json_decode($json, true);	
+			$collectionId=$obj["collectionId"];
 			$verif = new verificationModel;
 			$decode = $verif->decodeToken($tok); //decode le token
 			$user_id = ($decode["user_id"]);
@@ -90,14 +102,14 @@
 			if($user_id == $right["user_id"] && $user_id != NULL){  //on ajoute si l'utilisateur dans le token à le droit
 				$formData = array (
 					"id" => $collectionId,
-					"caracteristiqueTitle" => "ör'igine",
-					"caracteristiqueObl" => 1
+					"caracteristiqueTitle" => $obj["caracteristiqueTitle"],
+					"caracteristiqueObl" => $obj["caracteristiqueObl"]
 					);
 				$ajout = new NewModel;
 				$data = $ajout->newCaracteristique($formData);
 			}else{
 				echo "error";
 			}
-		    return $data;
+		    return json_encode($data);
 		}
 	}

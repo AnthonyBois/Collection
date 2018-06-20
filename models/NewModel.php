@@ -16,20 +16,21 @@
 		// UTILISATEUR
 		public function newUser($formData){
 			$sql = $this->db->prepare("
-				INSERT INTO user (user_firstname, user_name, user_pseudo, user_email, user_password, user_create_time)
-				VALUES (:firstname, :name, :pseudo, :email, :password, NOW())
+				INSERT INTO user (user_firstname, user_name, user_pseudo, user_email, user_password, user_image, user_create_time)
+				VALUES (:firstname, :name, :pseudo, :email, :password, :image, NOW())
 				");
 			$sql->bindValue('firstname', $formData['firstname'], PDO::PARAM_INT);
 			$sql->bindValue('name', $formData['name'], PDO::PARAM_INT );
 			$sql->bindValue('pseudo', $formData['pseudo'], PDO::PARAM_INT);
 			$sql->bindValue('email', $formData['email'], PDO::PARAM_INT);
 			$sql->bindValue('password', $formData['password'], PDO::PARAM_INT);
+			$sql->bindValue('image', $formData['image'], PDO::PARAM_INT);
 			$sql->execute();
-			return "bien ajouté";
+			return true;
 		}
 		
 		// COLLECTION
-		public function newCollection($formData, $idUser){
+		public function newCollection($formData){
 			$sql = $this->db->prepare("
 				INSERT INTO collection (collection_title, collection_description, collection_image, collection_create_time)
 				VALUES (:title, :description, :image, NOW())
@@ -47,7 +48,7 @@
 				VALUES (:collectionId, :idUser, 1)
 				");
 			$sql->bindValue('collectionId', $collectionId, PDO::PARAM_INT);
-			$sql->bindValue('idUser', $idUser, PDO::PARAM_INT );
+			$sql->bindValue('idUser', $formData['id'], PDO::PARAM_INT );
 			$sql->execute();
 			
 			
@@ -55,11 +56,10 @@
 			
 			 foreach($formData['caracteristiques']	as $value){
 			 	$sql = $this->db->prepare("
-					INSERT INTO caracteristique (caracteristique_title, caracteristique_obligatoire)
-					VALUES (:caracteristiqueTitle, :caracteristiqueObl)
+					INSERT INTO caracteristique (caracteristique_title)
+					VALUES (:caracteristiqueTitle)
 					");
 				$sql->bindValue('caracteristiqueTitle', $value['caracteristiqueTitle'], PDO::PARAM_INT);
-				$sql->bindValue('caracteristiqueObl', $value['caracteristiqueObl'], PDO::PARAM_INT );
 				$sql->execute();
 				
 				$caracId = $this->db->lastInsertId();
@@ -76,15 +76,14 @@
 		
 		
 		// ITEM
-		public function newItem($formData, $collectionId){
-			$title = $formData['title'];
-			$image = $formData['image'];
+		public function newItem($formData){
 			$sql = $this->db->prepare("
 				INSERT INTO item (item_title, item_image, collection_id)
-				VALUES (:title, :image, $collectionId)
+				VALUES (:title, :image, :id)
 				");
 			$sql->bindValue('title', $formData['title'], PDO::PARAM_INT);
 			$sql->bindValue('image', $formData['image'], PDO::PARAM_INT);
+			$sql->bindValue('id', $formData['id'], PDO::PARAM_INT);
 			$sql->execute();
 			
 			$itemId = $this->db->lastInsertId();

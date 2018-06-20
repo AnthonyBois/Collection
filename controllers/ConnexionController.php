@@ -8,12 +8,14 @@
 		// se connecter
 		public function connect(){
 			$connect = new connexionModel;
-
-			$email = "j'@yahooooooo.com";
-			$password = "super";
+			$json=file_get_contents('php://input');
+			$obj=json_decode($json, true);	
+			$email = $obj["email"]; 
+			$password = $obj["password"];
+			
 			$data = $connect->connect($email, $password);
 			
-	        return $data;
+	        return json_encode($data);
 		}
 		
 		public function newPassword(){

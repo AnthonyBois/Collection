@@ -22,6 +22,7 @@
 			
 			foreach  ($result as $row) {
 		        $user_password = $row['user_password'];
+		        $user_id = $row['user_id'];
 		       
 		  }
 					
@@ -47,8 +48,11 @@
 					
 					// Create JWT
 					$jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
-					
-					return $jwt;
+					$array = array(
+					    "jwt" => $jwt,
+					    "id" => $user_id
+					);
+					return $array;
 				}
 			}else{
 				return "null";

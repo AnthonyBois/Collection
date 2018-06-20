@@ -9,8 +9,14 @@ RewriteRule ^([a-z0-9\-]+)/([a-z0-9\-]+)/id/([a-z0-9\-]+)$ ?action=$1&fonction=$
 RewriteRule ^([a-z0-9\-]+)/([a-z0-9\-]+)/user/([0-9]+)$ ?action=$1&fonction=$2&idUser=$3 [L]
 RewriteRule ^([a-z0-9\-]+)/([a-z0-9\-]+)/id/([a-z0-9\-]+)/user/([0-9]+)$ ?action=$1&fonction=$2&id=$3&idUser=$4 [L] 
 
+#reecriture d'url controller/fonction/string
+RewriteRule ^([a-z0-9\-]+)/([a-z0-9\-]+)/string/([a-z0-9\-]+)$ ?action=$1&fonction=$2&string=$3 [L]
+
 #reecriture d'url avec token
 RewriteRule ^([a-z0-9\-]+)/([a-z0-9\-]+)/tok/([A-Za-z0-9\-_.]+)$ ?action=$1&fonction=$2&tok=$3 [L]
 
 #reecriture d'url connexion
 RewriteRule ^(connexion)$ ?action=connexion [L]
+
+#reecriture verification
+RewriteRule ^(verif)$ ?action=verif [L]

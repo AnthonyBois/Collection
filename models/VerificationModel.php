@@ -45,6 +45,17 @@
 			return $result;
 		}
 		
+		// PASSWORD
+		public function verifPassword($user){
+			$sql = $this->db->prepare("
+				SELECT user.user_password FROM user
+				WHERE user.user_id = '$user'
+			");
+			$sql->execute();
+			$result = $sql->fetch(PDO::FETCH_ASSOC);
+			return $result;
+		}
+		
 		// decoder le token
 		public function decodeToken($tok){
 	        list($header, $payload, $signature) = explode (".", $tok); //explode du token

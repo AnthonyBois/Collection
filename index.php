@@ -5,6 +5,7 @@
 	require_once("./controllers/NewController.php");
 	require_once("./controllers/ConnexionController.php");
 	require_once("./controllers/UpdateController.php");
+	require_once("./controllers/VerificationController.php");
 
 	//récuppération des parametres de l'url
 	$controller = $_GET['action'];
@@ -13,6 +14,7 @@
 	$idUser = $_GET['idUser'];
 	$idCollection = $_GET['idCollection'];
 	$tok = $_GET["tok"];
+	$string = $_GET["string"];
 
 
 	switch ($controller) {
@@ -25,11 +27,20 @@
 			    case "collections":
 			        $data = $liste->exportCollection($id, $idUser);
 			        break;
+			    case "recherche":
+			        $data = $liste->exportRechercheCollection($string);
+			        break;
+			    case "random":
+			        $data = $liste->exportRandomCollection($idUser);
+			        break;
 			    case "datas":
 			        $data = $liste->exportData($id);
 			        break;
 			    case "item":
 			        $data = $liste->exportItem($id);
+			        break;
+			    case "carac":
+			        $data = $liste->exportCarac($id);
 			        break;
 			    default:
 			    	$data = "null";
@@ -60,6 +71,9 @@
 			    case "user":
 			    	$data = $update->updateUser($tok);
 			        break;
+			    case "image":
+			    	$data = $update->uploadImage($tok);
+			        break;
 			    case "collection":
 			    	$data = $update->updateCollection($tok);
 			        break;
@@ -68,6 +82,15 @@
 			        break;
 			    case "caracteristique":
 			    	$data = $update->updateCaracteristique($tok);
+			        break;
+			    case "imguser":
+			    	$data = $update->updateImgUser($tok);
+			        break;
+			    case "imgcol":
+			    	$data = $update->updateImgCollection($tok);
+			        break;
+			    case "imgitem":
+			    	$data = $update->updateImgItem($tok);
 			        break;
 			    default:
 			    	$data = "null";
@@ -99,6 +122,10 @@
 	    	}else{
 	    		$data = $connect->connect();
 	    	}
+	        break;
+	   case "verif":
+	    	$verif = new VerificationController;
+		    $data = $verif->verifPassword();
 	        break;
 	    default:
 			$data = "null";

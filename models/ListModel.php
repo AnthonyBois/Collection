@@ -33,6 +33,7 @@
 						user.user_pseudo AS pseudo,
 						user.user_email AS email,
 						user.user_password AS password,
+						user.user_image as image,
 						COUNT(collection.collection_id) as nombre_collection,
 						GROUP_CONCAT(collection.collection_id SEPARATOR ',' ) AS collections
 				FROM user
@@ -72,6 +73,61 @@
 				LEFT JOIN user_collection ON user_collection.collection_id = collection.collection_id
 				LEFT JOIN user ON user_collection.user_id = user.user_id
 				$where
+			", $this->db);
+
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+				}
+			}
+			return $result;
+		}
+		
+		// COLLECTION RANDOM
+		public function listRandomCollection($idUser){
+			$sql = mysql_query("
+				SELECT 	collection.collection_id AS id, 
+						collection.collection_title AS title, 
+						collection.collection_description AS description, 
+						collection.collection_image AS image, 
+						collection.collection_private AS private, 
+						user.user_id AS user_id,
+						user.user_name AS user_name,
+						user.user_pseudo as pseudo
+				FROM collection
+				LEFT JOIN user_collection ON user_collection.collection_id = collection.collection_id
+				LEFT JOIN user ON user_collection.user_id = user.user_id
+				WHERE user.user_id <>'$idUser'
+			", $this->db);
+
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+				}
+			}
+			return $result;
+		}
+		
+		// COLLECTION RECHERCHE
+		public function listRechercheCollection($string){
+			$sql = mysql_query("
+				SELECT 	collection.collection_id AS id, 
+						collection.collection_title AS title, 
+						collection.collection_description AS description, 
+						collection.collection_image AS image, 
+						collection.collection_private AS private, 
+						user.user_id AS user_id,
+						user.user_name AS user_name,
+						user.user_pseudo as pseudo,
+						COUNT(item.collection_id)
+				FROM collection
+				LEFT JOIN user_collection ON user_collection.collection_id = collection.collection_id
+				LEFT JOIN user ON user_collection.user_id = user.user_id
+				LEFT JOIN item ON item.collection_id = collection.collection_id
+				WHERE collection.collection_title LIKE '%$string%' OR user.user_name LIKE '%$string%'
+				GROUP BY collection.collection_id
 			", $this->db);
 
 			if(mysql_num_rows($sql) > 0){
@@ -142,6 +198,26 @@
 				LEFT JOIN user_collection ON user_collection.collection_id = collection.collection_id
 				LEFT JOIN user ON user_collection.user_id = user.user_id
 				WHERE item.item_id ='$id'
+			", $this->db);
+
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+				}
+			}
+			return $result;
+		}
+		
+		// ITEM
+		public function listCarac($id){
+			$where = "WHERE 1 = 1";
+			$sql = mysql_query("
+				SELECT caracteristique.caracteristique_id, caracteristique.caracteristique_title
+				FROM caracteristique
+				LEFT JOIN caracteristique_item ON caracteristique_item.caracteristique_id = caracteristique.caracteristique_id
+				LEFT JOIN collection ON collection.collection_id = caracteristique_item.collection_id
+				WHERE collection.collection_id = $id
 			", $this->db);
 
 			if(mysql_num_rows($sql) > 0){
